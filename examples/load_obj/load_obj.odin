@@ -91,7 +91,7 @@ main :: proc() {
 	} else {
 		fd := os.stdout
 	}
-	w := io.to_writer(os.stream_from_handle(fd))
+	w := io.to_writer(os.stream_from_handle(fd)) or_else panic("io.to_writer")
 
 	wprintfln(w, "Object %s", obj_file)
 	fmt.printfln("reading %s", obj_file)
