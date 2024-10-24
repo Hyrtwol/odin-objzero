@@ -7,7 +7,7 @@ import "core:os"
 import "core:path/filepath"
 import "core:strings"
 
-wrtie_log_file :: true
+write_log_file :: true
 output_path :: "load_obj.txt"
 //input_path :: "../cube.obj"
 input_path :: "../gazebo.obj"
@@ -15,11 +15,11 @@ input_path :: "../gazebo.obj"
 wprintf :: fmt.wprintf
 wprintfln :: fmt.wprintfln
 
-progressCallback :: proc(filename: cstring, progress: i32) {
+progress_callback :: proc(filename: cstring, progress: i32) {
 	fmt.printf("\rprogress: %d%%", progress)
 }
 
-printModel :: proc(w: io.Writer, model: ^oz.objzModel) {
+print_model :: proc(w: io.Writer, model: ^oz.objzModel) {
 
 	mats := oz.get_materials(model)
 	for &mat, i in mats {
@@ -79,11 +79,11 @@ printModel :: proc(w: io.Writer, model: ^oz.objzModel) {
 main :: proc() {
 	fmt.println("objzero Reader")
 
-	clean_path := filepath.clean(input_path, context.temp_allocator)
-	clean_path, _ = filepath.abs(clean_path, context.temp_allocator)
-	obj_file := strings.clone_to_cstring(clean_path, context.temp_allocator)
+	clean_path := filepath.clean(input_path, context.temp_allocator) or_else panic("filepath.clean")
+	clean_path = filepath.abs(clean_path, context.temp_allocator) or_else panic("filepath.abs")
+	obj_file := strings.clone_to_cstring(clean_path, context.temp_allocator) or_else panic("strings.clone_to_cstring")
 
-	when wrtie_log_file {
+	when write_log_file {
 		fmt.printfln("writing %s", output_path)
 		fd, fe := os.open(output_path, os.O_WRONLY | os.O_CREATE | os.O_TRUNC, 0)
 		if fe != os.ERROR_NONE {fmt.panicf("open error %v", fe)}
@@ -95,7 +95,7 @@ main :: proc() {
 
 	wprintfln(w, "Object %s", obj_file)
 	fmt.printfln("reading %s", obj_file)
-	oz.objz_setProgress(progressCallback)
+	oz.objz_setProgress(progress_callback)
 	obj := oz.objz_load(obj_file)
 	if obj == nil {
 		fmt.println("error:", oz.objz_getError())
@@ -104,7 +104,7 @@ main :: proc() {
 	defer oz.objz_destroy(obj)
 
 	fmt.println()
-	printModel(w, obj)
+	print_model(w, obj)
 
 	fmt.println("Done.")
 }
