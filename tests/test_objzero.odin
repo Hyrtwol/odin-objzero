@@ -30,3 +30,8 @@ verify_objzModelFlag :: proc(t: ^testing.T) {
 	expect_flags(t, oz.objzModelFlags{.OBJZ_FLAG_NORMALS}, 1 << 1)
 	expect_flags(t, oz.objzModelFlags{.OBJZ_FLAG_INDEX32}, 1 << 2)
 }
+
+@(test)
+verify_size_max :: proc(t: ^testing.T) {
+	expect_value(t, oz.SIZE_MAX, 0xffffffffffffffff)
+}
